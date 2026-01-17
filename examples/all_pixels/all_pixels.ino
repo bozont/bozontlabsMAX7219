@@ -5,7 +5,11 @@
 #define DISP_SPI_CS 5
 #define DISP_NUMBER_OF_DEVICES 4
 
+// Software SPI (on any GPIO)
 bozontlabsMAX7219 max7219 = bozontlabsMAX7219(DISP_SPI_CS, DISP_SPI_MOSI, DISP_SPI_CLK, DISP_NUMBER_OF_DEVICES);
+
+// Hardware SPI (on dedicated SPI pins)
+//bozontlabsMAX7219 max7219 = bozontlabsMAX7219(DISP_SPI_CS, DISP_NUMBER_OF_DEVICES);
 
 void setup() {
   max7219.begin();
