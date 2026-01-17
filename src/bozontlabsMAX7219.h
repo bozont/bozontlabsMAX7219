@@ -10,6 +10,8 @@ public:
 
   void begin();
   uint8_t getDeviceCount();
+  uint8_t getDisplayWidth();
+  uint8_t getDisplayHeight();
   void shutdown(bool shutdown);
   void setScanLimit(uint8_t limit);
   void setBrightness(uint8_t brightness);

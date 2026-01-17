@@ -14,8 +14,8 @@ void setup() {
 }
 
 void loop() {
-  uint8_t x = random(0, 32);
-  uint8_t y = random(0, 8);
+  uint8_t x = random(0, max7219.getDisplayWidth());
+  uint8_t y = random(0, max7219.getDisplayHeight());
   max7219.setPixel(x, y, true);
   delay(500);
   max7219.setPixel(x, y, false);

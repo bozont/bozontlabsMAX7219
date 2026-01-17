@@ -57,6 +57,14 @@ uint8_t bozontlabsMAX7219::getDeviceCount() {
   return this->num_devices;
 }
 
+uint8_t bozontlabsMAX7219::getDisplayWidth() {
+  return this->display_width;
+}
+
+uint8_t bozontlabsMAX7219::getDisplayHeight() {
+  return this->display_height;
+}
+
 void bozontlabsMAX7219::shutdown(bool shutdown) {
   uint8_t cmd_payload;
   if (!shutdown) {

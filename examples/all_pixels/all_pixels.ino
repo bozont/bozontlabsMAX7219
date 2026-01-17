@@ -14,15 +14,15 @@ void setup() {
 }
 
 void loop() {
-  for(uint32_t y = 0; y < 8; y++) {
-    for(uint32_t x = 0; x < 32; x++) {
+  for(uint32_t y = 0; y < max7219.getDisplayHeight(); y++) {
+    for(uint32_t x = 0; x < max7219.getDisplayWidth(); x++) {
       max7219.setPixel(x, y, true);
       delay(10);
     }
   }
 
-  for(uint32_t y = 0; y < 8; y++) {
-    for(uint32_t x = 0; x < 32; x++) {
+  for(uint32_t y = 0; y < max7219.getDisplayHeight(); y++) {
+    for(uint32_t x = 0; x < max7219.getDisplayWidth(); x++) {
       max7219.setPixel(x, y, false);
       delay(10);
     }
