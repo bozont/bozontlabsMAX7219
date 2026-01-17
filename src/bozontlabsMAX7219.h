@@ -1,10 +1,13 @@
 #pragma once
 
 #include <Arduino.h>
+#include <SPI.h>
 
 class bozontlabsMAX7219 {
 public:
-  bozontlabsMAX7219(pin_size_t pin_MOSI, pin_size_t pin_CLK, pin_size_t pin_CS, uint8_t devices = 4);
+  bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin_size_t pin_CLK, uint8_t devices = 4);
+  bozontlabsMAX7219(pin_size_t pin_CS, uint8_t devices = 4, SPIClass* spi_bus = &SPI, uint32_t spi_bus_speed = 10000000);
+
   void begin();
   uint8_t getDeviceCount();
   void shutdown(bool shutdown);
@@ -29,7 +32,17 @@ private:
   void setLed(uint8_t addr, uint8_t row, uint8_t col, bool state);
   void spiTransfer(uint8_t addr, uint8_t reg, uint8_t data);
 
-  enum max7219_register {
+  SPIClass* hw_spi_bus;
+
+  enum spi_bus_mode_t {
+    BUSMODE_SOFTWARE_SPI,
+    BUSMODE_HARDWARE_SPI
+  };
+
+  spi_bus_mode_t spi_bus_mode;
+  uint32_t spi_bus_speed;
+
+  enum max7219_register_t {
     REG_NOOP = 0,
     REG_DIGIT0 = 1,
     REG_DIGIT1 = 2,

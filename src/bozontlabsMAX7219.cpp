@@ -1,6 +1,7 @@
 #include "bozontlabsMAX7219.h"
 
-bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_MOSI, pin_size_t pin_CLK, pin_size_t pin_CS, uint8_t devices) {
+bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin_size_t pin_CLK, uint8_t devices)
+    : hw_spi_bus(nullptr) {
   this->display_pin_MOSI = pin_MOSI;
   this->display_pin_CLK = pin_CLK;
   this->display_pin_CS = pin_CS;
@@ -11,11 +12,32 @@ bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_MOSI, pin_size_t pin_CLK, pi
   this->num_devices = devices;
   this->display_height = 8u;
   this->display_width = 8u * this->num_devices;
+  this->spi_bus_mode = BUSMODE_SOFTWARE_SPI;
+}
+
+bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, uint8_t devices, SPIClass* spi_bus, uint32_t spi_bus_speed) {
+  this->display_pin_CS = pin_CS;
+
+  if (devices <= 0 || devices > 8) {
+    devices = 8;
+  }
+  this->num_devices = devices;
+  this->display_height = 8u;
+  this->display_width = 8u * this->num_devices;
+
+  this->spi_bus_mode = BUSMODE_HARDWARE_SPI;
+  this->hw_spi_bus = spi_bus;
+  this->spi_bus_speed = spi_bus_speed;
 }
 
 void bozontlabsMAX7219::begin() {
-  pinMode(this->display_pin_MOSI, OUTPUT);
-  pinMode(this->display_pin_CLK, OUTPUT);
+  if (this->spi_bus_mode == BUSMODE_SOFTWARE_SPI) {
+    pinMode(this->display_pin_MOSI, OUTPUT);
+    pinMode(this->display_pin_CLK, OUTPUT);
+  } else if (this->spi_bus_mode == BUSMODE_HARDWARE_SPI) {
+    this->hw_spi_bus->begin();
+  }
+
   pinMode(this->display_pin_CS, OUTPUT);
   digitalWrite(this->display_pin_CS, HIGH);
 
@@ -111,8 +133,18 @@ void bozontlabsMAX7219::spiTransfer(uint8_t addr, uint8_t reg, uint8_t data) {
   spi_output_buffer[offset + 1] = reg;
 
   digitalWrite(this->display_pin_CS, LOW);
-  for (int i = maxbytes; i > 0; i--) {
-    shiftOut(this->display_pin_MOSI, this->display_pin_CLK, MSBFIRST, spi_output_buffer[i - 1]);
+
+  if (this->spi_bus_mode == BUSMODE_SOFTWARE_SPI) {
+    for (uint8_t i = maxbytes; i > 0; i--) {
+      shiftOut(this->display_pin_MOSI, this->display_pin_CLK, MSBFIRST, spi_output_buffer[i - 1]);
+    }
+  } else if (this->spi_bus_mode == BUSMODE_HARDWARE_SPI) {
+    this->hw_spi_bus->beginTransaction(SPISettings(this->spi_bus_speed, MSBFIRST, SPI_MODE0));
+    for (uint8_t i = maxbytes; i > 0; i--) {
+      this->hw_spi_bus->transfer(spi_output_buffer[i-1]);
+    }
+    this->hw_spi_bus->endTransaction();
   }
+
   digitalWrite(this->display_pin_CS, HIGH);
 }

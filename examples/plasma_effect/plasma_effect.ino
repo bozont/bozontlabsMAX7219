@@ -8,7 +8,7 @@
 const int WIDTH = 32;
 const int HEIGHT = 8;
 
-bozontlabsMAX7219 max7219 = bozontlabsMAX7219(DISP_SPI_MOSI, DISP_SPI_CLK, DISP_SPI_CS, DISP_NUMBER_OF_DEVICES);
+bozontlabsMAX7219 max7219 = bozontlabsMAX7219(DISP_SPI_CS, DISP_SPI_MOSI, DISP_SPI_CLK, DISP_NUMBER_OF_DEVICES);
 void plasmaEffect();
 
 void setup() {
