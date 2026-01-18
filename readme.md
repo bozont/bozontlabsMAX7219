@@ -1,13 +1,19 @@
 # bozontlabsMAX7219
 
-MAX7219 Arduino driver library for LED matrix displays.
+**MAX7219 Arduino driver library** for LED matrix displays.
 
-The library supports both software emulated and dedicated hardware SPI interfaces for driving displays. Software emulated SPI is great for flexibility - the display pins can be mapped to any GPIO. Hardware SPI can only be used on the dedicated SPI pins, however it'll be multiple times faster in driving the display than the software emulated bus.
+![](doc/max7219display.png)
+
+This library supports multiple MAX7219 chips connected in a daisy-chain (cascade) configuration and allows the display to be addressed using absolute X/Y coordinates.
+Each MAX7219 typically drives an 8×8 LED matrix, and displays are commonly sold as pre-assembled 4-module (32×8) units.
+
+The library can drive the display using either software-emulated SPI or hardware SPI.
+Software SPI is highly flexible and allows the display to be connected to any GPIO pin. Hardware SPI is restricted to the dedicated SPI pins but delivers much higher update speeds compared to the software-emulated approach.
 
 ## Features
  - Software emulated SPI support
  - Hardware SPI support
- - Absolute addressing of pixels
+ - Absolute X/Y addressing of pixels
  - Brightness control
  - Power control
 
@@ -35,7 +41,7 @@ You can also specify the bus speed in Hz:
 
 Before calling any library functions initialize the display with:
 
- - `.begin()`
+ - `begin()`
 
 API functions:
  - `begin()` - initializes the display
