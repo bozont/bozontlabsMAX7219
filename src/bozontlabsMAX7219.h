@@ -8,14 +8,31 @@ public:
   bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin_size_t pin_CLK, uint8_t devices = 4);
   bozontlabsMAX7219(pin_size_t pin_CS, uint8_t devices = 4, SPIClass* spi_bus = &SPI, uint32_t spi_bus_speed = 10000000);
 
+  // Initializes the display
   void begin();
+
+  // Returns the number of cascaded MAX7219 devices configured
   uint8_t getDeviceCount();
+
+  // Returns the calculated display width in pixels
   uint8_t getDisplayWidth();
+
+  // Returns the calculated display height in pixels
   uint8_t getDisplayHeight();
+
+  // Turns the display on/off
   void shutdown(bool shutdown);
+
+  // Sets the scan limit (rows scanned)
   void setScanLimit(uint8_t limit);
+
+  // Sets the brigtness of the display (0-15)
   void setBrightness(uint8_t brightness);
+
+  // Clears the contents of the display
   void clearDisplay();
+
+  // Sets or clears a pixel in the specified location
   void setPixel(uint8_t x, uint8_t y, bool value);
 
 private:
@@ -31,7 +48,10 @@ private:
   uint8_t display_width;
   uint8_t display_height;
 
+  // Sets or clears a pixel on the specified device
   void setLed(uint8_t addr, uint8_t row, uint8_t col, bool state);
+
+  // Transfers a byte of data to the specified register via SPI
   void spiTransfer(uint8_t addr, uint8_t reg, uint8_t data);
 
   SPIClass* hw_spi_bus;
