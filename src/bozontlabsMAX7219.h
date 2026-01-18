@@ -11,6 +11,9 @@ public:
   // Initializes the display
   void begin();
 
+  // Deinitializes the display
+  void end();
+
   // Returns the number of cascaded MAX7219 devices configured
   uint8_t getDeviceCount();
 

@@ -59,6 +59,12 @@ void bozontlabsMAX7219::begin() {
   this->setDisplayOn(true);
 }
 
+void bozontlabsMAX7219::end() {
+  this->clearDisplay();
+  this->setDisplayOn(false);
+  this->initialized = false;
+}
+
 uint8_t bozontlabsMAX7219::getDeviceCount() {
   return this->num_devices;
 }
