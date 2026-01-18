@@ -1,7 +1,8 @@
 #include "bozontlabsMAX7219.h"
 
 bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin_size_t pin_CLK, uint8_t devices)
-    : hw_spi_bus(nullptr) {
+    : display_on(false)
+    , hw_spi_bus(nullptr) {
   this->display_pin_MOSI = pin_MOSI;
   this->display_pin_CLK = pin_CLK;
   this->display_pin_CS = pin_CS;
@@ -49,7 +50,7 @@ void bozontlabsMAX7219::begin() {
   }
   this->clearDisplay();
   this->setScanLimit(this->led_matrix_scan_limit);
-  this->shutdown(false);
+  this->setDisplayOn(true);
   this->initialized = true;
 }
 
@@ -65,16 +66,22 @@ uint8_t bozontlabsMAX7219::getDisplayHeight() {
   return this->display_height;
 }
 
-void bozontlabsMAX7219::shutdown(bool shutdown) {
+void bozontlabsMAX7219::setDisplayOn(bool on) {
   uint8_t cmd_payload;
-  if (!shutdown) {
+  if (on) {
     cmd_payload = 1u;
+    this->display_on = true;
   } else {
     cmd_payload = 0u;
+    this->display_on = false;
   }
   for (uint8_t addr = 0u; addr < this->num_devices; addr++) {
     this->spiTransfer(addr, REG_SHUTDOWN, cmd_payload);
   }
+}
+
+bool bozontlabsMAX7219::getDisplayOn() {
+  return this->display_on;
 }
 
 void bozontlabsMAX7219::setScanLimit(uint8_t limit) {

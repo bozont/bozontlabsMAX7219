@@ -21,7 +21,10 @@ public:
   uint8_t getDisplayHeight();
 
   // Turns the display on/off
-  void shutdown(bool shutdown);
+  void setDisplayOn(bool on);
+
+  // Returns whether the display is on or off
+  bool getDisplayOn();
 
   // Sets the scan limit (rows scanned)
   void setScanLimit(uint8_t limit);
@@ -37,6 +40,7 @@ public:
 
 private:
   bool initialized;
+  bool display_on;
 
   uint8_t pixel_states[64];
 
