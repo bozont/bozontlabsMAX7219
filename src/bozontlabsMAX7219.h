@@ -40,6 +40,11 @@ private:
 
   uint8_t pixel_states[64];
 
+  // Scan limit must be 7 when using the MAX7219 chip to dirve an LED matrix
+  // 7 means that all 8 rows of a matrix is scanned and therefore usable
+  // Lower scan values are only used when driving a seven segment display with the chip
+  static const uint8_t led_matrix_scan_limit = 7u;
+
   pin_size_t display_pin_MOSI;
   pin_size_t display_pin_CLK;
   pin_size_t display_pin_CS;

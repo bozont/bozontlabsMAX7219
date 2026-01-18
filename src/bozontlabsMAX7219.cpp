@@ -48,7 +48,7 @@ void bozontlabsMAX7219::begin() {
     this->spiTransfer(i, REG_DECODEMODE, 0);
   }
   this->clearDisplay();
-  this->setScanLimit(7);
+  this->setScanLimit(this->led_matrix_scan_limit);
   this->shutdown(false);
   this->initialized = true;
 }
@@ -93,8 +93,8 @@ void bozontlabsMAX7219::setBrightness(uint8_t brightness) {
 
 void bozontlabsMAX7219::clearDisplay() {
   for (uint8_t addr = 0u; addr < this->num_devices; addr++) {
-    int offset = addr * 8;
-    for (int i = 0; i < 8; i++) {
+    uint8_t offset = addr * 8;
+    for (uint8_t i = 0; i < 8; i++) {
       this->pixel_states[offset + i] = 0;
       this->spiTransfer(addr, i + 1, this->pixel_states[offset + i]);
     }
@@ -111,7 +111,7 @@ void bozontlabsMAX7219::setPixel(uint8_t x, uint8_t y, bool value) {
 }
 
 void bozontlabsMAX7219::setLed(uint8_t addr, uint8_t row, uint8_t column, bool state) {
-  int offset;
+  uint8_t offset;
   uint8_t val = 0x00;
   if (addr < 0u || addr >= this->num_devices) {
     return;
@@ -149,7 +149,7 @@ void bozontlabsMAX7219::spiTransfer(uint8_t addr, uint8_t reg, uint8_t data) {
   } else if (this->spi_bus_mode == BUSMODE_HARDWARE_SPI) {
     this->hw_spi_bus->beginTransaction(SPISettings(this->spi_bus_speed, MSBFIRST, SPI_MODE0));
     for (uint8_t i = maxbytes; i > 0; i--) {
-      this->hw_spi_bus->transfer(spi_output_buffer[i-1]);
+      this->hw_spi_bus->transfer(spi_output_buffer[i - 1]);
     }
     this->hw_spi_bus->endTransaction();
   }
