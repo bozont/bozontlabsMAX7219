@@ -1,7 +1,8 @@
 #include "bozontlabsMAX7219.h"
 
 bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin_size_t pin_CLK, uint8_t devices)
-    : display_on(false)
+    : initialized(false)
+    , display_on(false)
     , hw_spi_bus(nullptr) {
   this->display_pin_MOSI = pin_MOSI;
   this->display_pin_CLK = pin_CLK;
@@ -16,7 +17,9 @@ bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, pin_size_t pin_MOSI, pin
   this->spi_bus_mode = BUSMODE_SOFTWARE_SPI;
 }
 
-bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, uint8_t devices, SPIClass* spi_bus, uint32_t spi_bus_speed) {
+bozontlabsMAX7219::bozontlabsMAX7219(pin_size_t pin_CS, uint8_t devices, SPIClass* spi_bus, uint32_t spi_bus_speed)
+    : initialized(false)
+    , display_on(false) {
   this->display_pin_CS = pin_CS;
 
   if (devices <= 0u || devices > 8u) {
@@ -45,13 +48,15 @@ void bozontlabsMAX7219::begin() {
   memset(this->pixel_states, 0u, sizeof(this->pixel_states));
 
   for (uint8_t i = 0u; i < this->num_devices; i++) {
+    // Display test off
     this->spiTransfer(i, REG_DISPLAYTEST, 0u);
+    // No font decoding for LED matrix usage
     this->spiTransfer(i, REG_DECODEMODE, 0u);
   }
+  this->initialized = true;
   this->clearDisplay();
   this->setScanLimit(this->led_matrix_scan_limit);
   this->setDisplayOn(true);
-  this->initialized = true;
 }
 
 uint8_t bozontlabsMAX7219::getDeviceCount() {
@@ -67,6 +72,7 @@ uint8_t bozontlabsMAX7219::getDisplayHeight() {
 }
 
 void bozontlabsMAX7219::setDisplayOn(bool on) {
+  if (!this->initialized) return;
   uint8_t cmd_payload;
   if (on) {
     cmd_payload = 1u;
@@ -85,20 +91,21 @@ bool bozontlabsMAX7219::getDisplayOn() {
 }
 
 void bozontlabsMAX7219::setScanLimit(uint8_t limit) {
-  if (limit > 7u) return;
+  if (!this->initialized || limit > 7u) return;
   for (uint8_t addr = 0u; addr < this->num_devices; addr++) {
     this->spiTransfer(addr, REG_SCANLIMIT, limit);
   }
 }
 
 void bozontlabsMAX7219::setBrightness(uint8_t brightness) {
-  if (brightness > 15u) return;
+  if (!this->initialized || brightness > 15u) return;
   for (uint8_t addr = 0u; addr < this->num_devices; addr++) {
     this->spiTransfer(addr, REG_INTENSITY, brightness);
   }
 }
 
 void bozontlabsMAX7219::clearDisplay() {
+  if (!this->initialized) return;
   for (uint8_t addr = 0u; addr < this->num_devices; addr++) {
     uint8_t offset = addr * 8u;
     for (uint8_t i = 0u; i < 8u; i++) {
@@ -109,7 +116,7 @@ void bozontlabsMAX7219::clearDisplay() {
 }
 
 void bozontlabsMAX7219::setPixel(uint8_t x, uint8_t y, bool value) {
-  if (x >= this->display_width || y >= this->display_height) {
+  if (!this->initialized || x >= this->display_width || y >= this->display_height) {
     return;
   }
   uint8_t module_number = x / 8u;
