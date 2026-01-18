@@ -29,10 +29,7 @@ public:
   // Returns whether the display is on or off
   bool getDisplayOn();
 
-  // Sets the scan limit (rows scanned)
-  void setScanLimit(uint8_t limit);
-
-  // Sets the brigtness of the display (0-15)
+  // Sets the brightness of the display (0-15)
   void setBrightness(uint8_t brightness);
 
   // Clears the contents of the display
@@ -47,7 +44,7 @@ private:
 
   uint8_t pixel_states[64];
 
-  // Scan limit must be 7 when using the MAX7219 chip to dirve an LED matrix
+  // Scan limit must be 7 when using the MAX7219 chip to drive an LED matrix
   // 7 means that all 8 rows of a matrix is scanned and therefore usable
   // Lower scan values are only used when driving a seven segment display with the chip
   static const uint8_t led_matrix_scan_limit = 7u;
@@ -59,6 +56,9 @@ private:
   uint8_t num_devices;
   uint8_t display_width;
   uint8_t display_height;
+
+  // Sets the scan limit (rows scanned)
+  void setScanLimit(uint8_t limit);
 
   // Sets or clears a pixel on the specified device
   void setLed(uint8_t addr, uint8_t row, uint8_t col, bool state);
