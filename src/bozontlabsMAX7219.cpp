@@ -131,14 +131,14 @@ void bozontlabsMAX7219::setPixel(uint8_t x, uint8_t y, bool value) {
 }
 
 void bozontlabsMAX7219::setLed(uint8_t addr, uint8_t row, uint8_t column, bool state) {
-  if (addr < 0u || addr >= this->num_devices) {
+  if (addr >= this->num_devices) {
     return;
   }
-  if (row < 0u || row > 7u || column < 0u || column > 7u) {
+  if (row > 7u || column > 7u) {
     return;
   }
   uint8_t offset = addr * 8u;
-  uint8_t val = B10000000 >> column;
+  uint8_t val = 0b10000000 >> column;
   if (state) {
     this->pixel_states[offset + row] = this->pixel_states[offset + row] | val;
   } else {
